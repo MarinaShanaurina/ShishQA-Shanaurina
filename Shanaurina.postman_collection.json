@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "99feb3ee-707a-4e54-ab5e-05822b7a60f1",
+		"name": "Shanaurina",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://yandex.ru/",
+					"protocol": "https",
+					"host": [
+						"yandex",
+						"ru"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createmeta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var resBody = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Set Variable\", function () {\r",
+							"    pm.environment.set(\"projectKey\", resBody.projects[1].key);\r",
+							"    pm.environment.set(\"issueType\", resBody.projects[1].issuetypes[2].id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/createmeta",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"createmeta"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Createissue",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var rnd = Math.random();\r",
+							"pm.environment.set(\"summary\", \"Shanaurina-TestIssue_\" + rnd);\r",
+							"pm.environment.set(\"description\", \"Yasno\" + rnd);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var resBody = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Set Isuue Id\", function () {\r",
+							"    pm.environment.set(\"issueId\", resBody.id);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fields\": {\r\n    \"project\": { \r\n      \"key\": \"{{projectKey}}\"\r\n    },\r\n    \"summary\": \"{{summary}}\",\r\n    \"description\": \"{{description}}\",\r\n    \"issuetype\": {\r\n      \"id\": \"{{issueType}}\"\r\n    }\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}",
+					"host": [
+						"{{URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetissueId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var resBody = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Summary & Description Tests\", function () {\r",
+							"    pm.expect(resBody.fields.summary).to.eql(pm.environment.get(\"summary\"));\r",
+							"    pm.expect(resBody.fields.description).to.eql(pm.environment.get(\"description\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/{{issueId}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"{{issueId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transitions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var resBody = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status issue\", function () {\r",
+							"    pm.environment.set(\"transitId\", resBody.transitions[1].id);\r",
+							"    pm.environment.set(\"transitName\", resBody.transitions[1].name);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/{{issueId}}/transitions",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"{{issueId}}",
+						"transitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostTransitions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"transition\": {\r\n      \"id\": \"{{transitId}}\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/{{issueId}}/transitions",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"{{issueId}}",
+						"transitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetissueIdForTransition",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var resBody = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Transit Tests\", function () {\r",
+							"    pm.expect(resBody.fields.status.name).to.eql(pm.environment.get(\"transitName\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/{{issueId}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"{{issueId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "123456",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "marish87@yandex.ru",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
